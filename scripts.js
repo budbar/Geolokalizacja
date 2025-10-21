@@ -35,8 +35,17 @@ function getAxis() {
 }
 
 function vibration() {
-    navigator.vibrate(200);
+    if("vibrate" in navigator)
+        navigator.vibrate([200, 100, 200]);
 }
+
+document.getElementById("rotate_button").addEventListener("click", async () => {
+    const documentElement = document.documentElement;
+
+    if(!document.fullscreenElement) {
+        await documentElement.requestFullscreen();
+    }
+})
 
 window.addEventListener("DOMContentLoaded", () => {
     getLocation();

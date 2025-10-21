@@ -34,6 +34,10 @@ function getAxis() {
     }
 }
 
+function vibration() {
+    navigator.vibrate(200);
+}
+
 window.addEventListener("DOMContentLoaded", () => {
     getLocation();
     getAxis();

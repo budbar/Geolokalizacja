@@ -6,7 +6,7 @@
     <title>Przednia Kamerka</title>
 </head>
 <body>
-    <video id="video" width="100%" height="auto" autoplay></video>
+    <video id="video" width="100%" height="auto" autoplay hidden></video>
 
     <button id="start_nfc">Rozpocznij odczyt NFC</button>
     <p id="output_nfc">Zeskanuj tag NFC...</p>
@@ -44,13 +44,13 @@
                     ndef.onreading = event => {
                         const decoder = new TextDecoder();
                         for (const record of event.message.records) {
-                        if (record.recordType === "text") {
-                            output.textContent = "Odczytano tekst: " + decoder.decode(record.data);
-                        } else if (record.recordType === "url") {
-                            output.textContent = "Odczytano URL: " + decoder.decode(record.data);
-                        } else {
-                            output.textContent = "Nieznany typ rekordu NFC";
-                        }
+                            if (record.recordType === "text") {
+                                output.textContent = "Odczytano tekst: " + decoder.decode(record.data);
+                            } else if (record.recordType === "url") {
+                                output.textContent = "Odczytano URL: " + decoder.decode(record.data);
+                            } else {
+                                output.textContent = "Nieznany typ rekordu NFC";
+                            }
                         }
                     };
 

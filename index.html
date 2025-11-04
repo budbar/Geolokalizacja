@@ -8,16 +8,18 @@
 <body>
     <video id="video" width="100%" height="auto" autoplay></video>
 
+    <button id="start_nfc">Rozpocznij odczyt NFC</button>
+    <p id="output_nfc">Zeskanuj tag NFC...</p>
+
     <script>
+        //Obsługa przedniej kamery
         if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-            // Uzyskiwanie dostępu do kamery
             navigator.mediaDevices.getUserMedia({
                 video: {
-                    facingMode: 'user'  // Ustawienie przedniej kamery (facingMode: 'user')
+                    facingMode: 'user'
                 }
             })
             .then(function(stream) {
-                // Po uzyskaniu strumienia, ustawiamy go jako źródło wideo
                 const videoElement = document.getElementById('video');
                 videoElement.srcObject = stream;
             })
@@ -27,6 +29,42 @@
         } else {
             alert("Twoja przeglądarka nie wspiera tej funkcji.");
         }
+
+        //Obsługa NFC
+        const startButton = document.getElementById('start_nfc');
+        const output = document.getElementById('output_nfc');
+
+        startButton.addEventListener('click', async () => {
+            if ('NDEFReader' in window) {
+                try {
+                    const ndef = new NDEFReader();
+                    await ndef.scan();
+                    output.textContent = 'Zbliż tag NFC do telefonu...';
+
+                    ndef.onreading = event => {
+                        const decoder = new TextDecoder();
+                        for (const record of event.message.records) {
+                        if (record.recordType === "text") {
+                            output.textContent = "Odczytano tekst: " + decoder.decode(record.data);
+                        } else if (record.recordType === "url") {
+                            output.textContent = "Odczytano URL: " + decoder.decode(record.data);
+                        } else {
+                            output.textContent = "Nieznany typ rekordu NFC";
+                        }
+                        }
+                    };
+
+                    ndef.onreadingerror = () => {
+                        output.textContent = 'Błąd podczas odczytu NFC.';
+                    };
+
+                } catch (error) {
+                    output.textContent = 'Błąd: ' + error;
+                }
+            } else {
+                output.textContent = 'Twoja przeglądarka nie wspiera Web NFC.';
+            }
+        });
     </script>
 </body>
 </html>
